@@ -1,0 +1,82 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #a2d2ff, #bde0fe);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  animation: aparecer 0.5s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+h1, h2 {
+  color: #023e8a;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+select, input, button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  border: 2px solid #90e0ef;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #0077b6;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #023e8a;
+}
+
+#mensaje {
+  font-size: 1.2rem;
+  margin-top: 20px;
+  color: #03045e;
+}
+
+.creditos {
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: 95%;
+  }
+}
