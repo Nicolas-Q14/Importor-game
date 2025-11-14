@@ -18,8 +18,22 @@
   <div id="pantalla-config" class="pantalla hidden">
     <h2>Configuración del juego</h2>
 
-    <label for="tema">Selecciona un tema:</label>
-    <select id="tema"></select>
+    <div class="opcion-tema">
+      <label>
+        <input type="radio" name="tipoTema" value="seleccionado" checked>
+        Seleccionar tema
+      </label>
+      <label>
+        <input type="radio" name="tipoTema" value="aleatorio">
+        Categoría aleatoria (sorpresa)
+      </label>
+    </div>
+
+    <div id="seleccion-tema">
+      <label for="tema">Selecciona un tema:</label>
+      <select id="tema"></select>
+      <button id="btnVerTodos" class="btn">Ver todos los temas</button>
+    </div>
 
     <label for="jugadores">Número de jugadores:</label>
     <input type="number" id="jugadores" value="4" min="3" max="12">
@@ -30,10 +44,28 @@
     <button id="jugarBtn" class="btn">Comenzar</button>
   </div>
 
+  <!-- Pantalla de todos los temas -->
+  <div id="pantalla-todos-temas" class="pantalla hidden">
+    <h2>Todos los temas disponibles</h2>
+    <div id="lista-temas" class="lista-temas"></div>
+    <button id="btnVolverConfig" class="btn">Volver</button>
+  </div>
+
   <!-- Pantalla de resultados -->
   <div id="resultado" class="pantalla hidden">
     <p id="mensaje"></p>
     <button id="siguienteBtn" class="btn">Siguiente</button>
+  </div>
+
+  <!-- Pantalla de ruleta -->
+  <div id="pantalla-ruleta" class="pantalla hidden">
+    <h2>¡Todos listos! Ahora la ruleta decidirá quién empieza</h2>
+    <div class="ruleta-container">
+      <div id="ruleta" class="ruleta"></div>
+      <div class="flecha"></div>
+    </div>
+    <p id="jugador-seleccionado"></p>
+    <button id="btnVolverInicio" class="btn">Volver al inicio</button>
   </div>
 
   <canvas id="fondoAnimado"></canvas>
