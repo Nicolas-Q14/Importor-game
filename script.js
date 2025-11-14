@@ -20,7 +20,7 @@ const temasLocales = {
   
   "Medios de transporte": ["Carro", "Moto", "Bicicleta", "Avión", "Barco", "Tren", "Autobús", "Helicóptero", "Camión", "Metro", "Patineta", "Submarino", "Tractor", "Taxi", "Globo aerostático"],
   
-  "Instrumentos musicales": ["Guitarra", "Piano", "Batería", "Violín", "Trompeta", "Flauta", "Saxofón", "Arpa", "Ukelele", "Tambor", "Bajo", "Clarinete", "Maracas", "Órgano", "Xilófono"],
+  "Instrumentos musicales": ["Guitarra", "Piano", "Batería", "Violín", "Trompeta", "Flauta", "Saxófono", "Arpa", "Ukelele", "Tambor", "Bajo", "Clarinete", "Maracas", "Órgano", "Xilófono"],
   
   "Emociones": ["Alegría", "Tristeza", "Miedo", "Enojo", "Sorpresa", "Amor", "Vergüenza", "Orgullo", "Calma", "Ansiedad", "Esperanza", "Celos", "Culpa", "Paz", "Curiosidad"],
   
@@ -51,15 +51,30 @@ const temasLocales = {
   "Medios de comunicación": ["Periódico", "Radio", "Televisión", "Internet", "Podcast", "Correo", "Mensaje", "Noticia", "Entrevista", "Revista", "Red social"]
 };
 
-
 // 🧩 Referencias del DOM
 const pantallaInicio = document.getElementById("pantalla-inicio");
 const pantallaConfig = document.getElementById("pantalla-config");
+const pantallaTodosTemas = document.getElementById("pantalla-todos-temas");
 const resultado = document.getElementById("resultado");
+const pantallaRuleta = document.getElementById("pantalla-ruleta");
 const temaSelect = document.getElementById("tema");
 const jugarBtn = document.getElementById("jugarBtn");
 const siguienteBtn = document.getElementById("siguienteBtn");
 const mensaje = document.getElementById("mensaje");
+const btnVerTodos = document.getElementById("btnVerTodos");
+const btnVolverConfig = document.getElementById("btnVolverConfig");
+const listaTemas = document.getElementById("lista-temas");
+const ruleta = document.getElementById("ruleta");
+const jugadorSeleccionado = document.getElementById("jugador-seleccionado");
+const btnVolverInicio = document.getElementById("btnVolverInicio");
+const seleccionTema = document.getElementById("seleccion-tema");
+const opcionesTema = document.querySelectorAll('input[name="tipoTema"]');
+
+// Variables globales
+let palabras = [];
+let jugadorActual = 0;
+let totalJugadores = 0;
+let temaSeleccionado = "";
 
 // 🌐 Cargar temas extra desde API si hay Internet
 async function cargarTemasAPI() {
@@ -87,26 +102,75 @@ function actualizarTemas() {
   });
 }
 
+// 🧩 Mostrar todos los temas en la pantalla especial
+function mostrarTodosTemas() {
+  listaTemas.innerHTML = "";
+  Object.keys(temasLocales).forEach(tema => {
+    const temaItem = document.createElement("div");
+    temaItem.className = "tema-item";
+    temaItem.textContent = tema;
+    temaItem.addEventListener("click", () => {
+      temaSelect.value = tema;
+      pantallaTodosTemas.classList.add("hidden");
+      pantallaConfig.classList.remove("hidden");
+    });
+    listaTemas.appendChild(temaItem);
+  });
+}
+
 // 🔥 Navegación entre pantallas
 document.getElementById("btnComenzar").addEventListener("click", () => {
   pantallaInicio.classList.add("hidden");
   pantallaConfig.classList.remove("hidden");
 });
 
-// 🕹️ Lógica del juego
-let palabras = [];
-let jugadorActual = 0;
-let totalJugadores = 0;
+btnVerTodos.addEventListener("click", () => {
+  pantallaConfig.classList.add("hidden");
+  pantallaTodosTemas.classList.remove("hidden");
+  mostrarTodosTemas();
+});
 
+btnVolverConfig.addEventListener("click", () => {
+  pantallaTodosTemas.classList.add("hidden");
+  pantallaConfig.classList.remove("hidden");
+});
+
+btnVolverInicio.addEventListener("click", () => {
+  pantallaRuleta.classList.add("hidden");
+  pantallaInicio.classList.remove("hidden");
+});
+
+// 🎲 Manejar cambio entre tema seleccionado y aleatorio
+opcionesTema.forEach(opcion => {
+  opcion.addEventListener("change", (e) => {
+    if (e.target.value === "aleatorio") {
+      seleccionTema.style.display = "none";
+    } else {
+      seleccionTema.style.display = "block";
+    }
+  });
+});
+
+// 🕹️ Lógica del juego
 jugarBtn.addEventListener("click", () => {
-  const tema = temaSelect.value;
+  const tipoTema = document.querySelector('input[name="tipoTema"]:checked').value;
   const jugadores = parseInt(document.getElementById("jugadores").value);
   const impostores = parseInt(document.getElementById("impostores").value);
 
   totalJugadores = jugadores;
   jugadorActual = 0;
 
-  const palabrasTema = temasLocales[tema];
+  // Determinar el tema a usar
+  if (tipoTema === "aleatorio") {
+    // Seleccionar un tema aleatorio
+    const temas = Object.keys(temasLocales);
+    temaSeleccionado = temas[Math.floor(Math.random() * temas.length)];
+  } else {
+    // Usar el tema seleccionado
+    temaSeleccionado = temaSelect.value;
+  }
+
+  const palabrasTema = temasLocales[temaSeleccionado];
   const palabraElegida = palabrasTema[Math.floor(Math.random() * palabrasTema.length)];
   palabras = Array(jugadores).fill(palabraElegida);
 
@@ -117,6 +181,15 @@ jugarBtn.addEventListener("click", () => {
 
   pantallaConfig.classList.add("hidden");
   resultado.classList.remove("hidden");
+  
+  // Si es tema aleatorio, mostrar indicador especial
+  if (tipoTema === "aleatorio") {
+    const indicador = document.createElement("div");
+    indicador.className = "tema-aleatorio-indicador";
+    indicador.textContent = "🎲 ¡Categoría secreta seleccionada! 🎲";
+    resultado.insertBefore(indicador, resultado.firstChild);
+  }
+  
   mostrarJugador();
 });
 
@@ -136,9 +209,31 @@ function mostrarJugador() {
       };
     };
   } else {
-    mensaje.textContent = "¡Todos listos! A descubrir al impostor 👀";
-    siguienteBtn.classList.add("hidden");
+    // Todos han visto sus palabras, mostrar la ruleta
+    resultado.classList.add("hidden");
+    pantallaRuleta.classList.remove("hidden");
+    girarRuleta();
   }
+}
+
+// 🎡 Lógica de la ruleta
+function girarRuleta() {
+  // Reiniciar la ruleta
+  ruleta.style.transform = "rotate(0deg)";
+  jugadorSeleccionado.textContent = "";
+  
+  // Calcular un giro aleatorio (múltiplo de 360 + un giro extra)
+  const giroExtra = Math.floor(Math.random() * 360) + 360 * 5; // 5 vueltas completas + extra
+  ruleta.style.transform = `rotate(${giroExtra}deg)`;
+  
+  // Calcular qué jugador fue seleccionado
+  setTimeout(() => {
+    const anguloPorJugador = 360 / totalJugadores;
+    const anguloFinal = giroExtra % 360;
+    const jugadorIndex = Math.floor((360 - anguloFinal) / anguloPorJugador) % totalJugadores;
+    
+    jugadorSeleccionado.textContent = `¡El jugador ${jugadorIndex + 1} empieza!`;
+  }, 4000); // Esperar a que termine la animación
 }
 
 // 🌌 Fondo animado (estilo espacial)
